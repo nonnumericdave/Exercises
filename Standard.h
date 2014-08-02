@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdio.h>
 
+#include <functional>
 #include <memory>
 
 #endif

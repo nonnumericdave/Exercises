@@ -16,12 +16,49 @@ struct UnitTest
 };
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+bool
+TestBasic()
+{
+	auto pfnDummyRandomNumberGenerator = [] () -> double
+	{
+		return 0.5;
+	};
+
+	const size_t kuStartOfRange = 7;
+	const size_t kuEndOfRange = 101;
+
+	std::unique_ptr<size_t[]> puRandomNaturalSequenceArray =
+		::GenerateRandomNaturalSequence(kuStartOfRange, kuEndOfRange, pfnDummyRandomNumberGenerator);
+
+	const size_t kuNumberOfElements = kuEndOfRange - kuStartOfRange + 1;
+	for (size_t uElement = kuStartOfRange; uElement <= kuEndOfRange; uElement++)
+	{
+		bool bElementNotFound = true;
+		for (size_t uIndex = 0; uIndex < kuNumberOfElements; uIndex++)
+		{
+			if ( puRandomNaturalSequenceArray[uIndex] == uElement )
+			{
+				bElementNotFound = false;
+				break;
+			}
+		}
+
+		if ( bElementNotFound )
+			return false;
+	}
+
+	return true;
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 static const UnitTest g_aUnitTest[] =
 {
+	DefineUnitTest(TestBasic),
 };
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-bool TestDummy()
+bool 
+TestDummy()
 {
 	return true;
 }
@@ -40,9 +77,9 @@ Test()
 		bool bTestPassed = unitTest.pfnTest();
 
 		if ( bTestPassed )
-			::printf(" passed\n");
+			::printf("passed\n");
 		else
-			::printf(" failed\n");
+			::printf("failed\n");
 
 		bAllTestsHavePassed = bAllTestsHavePassed && bTestPassed;
 	}

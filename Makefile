@@ -1,12 +1,13 @@
 CXX=clang++
 CXXFLAGS+=-std=c++11
+LDFLAGS+=-stdlib=libc++
 
 MAIN_EXECUTABLE=main
 MAIN_SOURCES=main.cpp GenerateRandomNaturalSequence.cpp
 MAIN_OBJECTS=$(MAIN_SOURCES:.cpp=.o)
 
 TEST_EXECUTABLE=test
-TEST_SOURCES=Test.cpp
+TEST_SOURCES=Test.cpp GenerateRandomNaturalSequence.cpp
 TEST_OBJECTS=$(TEST_SOURCES:.cpp=.o)
 
 $(MAIN_EXECUTABLE): unittest $(MAIN_OBJECTS)
