@@ -7,5 +7,6 @@
 
 #include <functional>
 #include <memory>
+#include <random>
 
 #endif
