@@ -54,10 +54,7 @@ TestBasic()
 	std::unique_ptr<size_t[]> puSequencePermutationArray =
 		::GenerateSequencePermutation(kuStartOfRange, kuEndOfRange, pfnDummyRandomNumberGenerator);
 
-	if ( ! ::CheckForEveryNumberInRange(kuStartOfRange, kuEndOfRange, puSequencePermutationArray) )
-		return false;
-
-	return true;
+	return ::CheckForEveryNumberInRange(kuStartOfRange, kuEndOfRange, puSequencePermutationArray); 
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -79,10 +76,7 @@ TestUniformRealDistribution()
 	std::unique_ptr<size_t[]> puSequencePermutationArray =
 		::GenerateSequencePermutation(kuStartOfRange, kuEndOfRange, pfnRandomNumberGenerator);
 
-	if ( ! ::CheckForEveryNumberInRange(kuStartOfRange, kuEndOfRange, puSequencePermutationArray) )
-		return false;
-
-	return true;
+	return ::CheckForEveryNumberInRange(kuStartOfRange, kuEndOfRange, puSequencePermutationArray); 
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
