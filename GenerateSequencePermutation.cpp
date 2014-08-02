@@ -2,15 +2,15 @@
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 std::unique_ptr<size_t[]>
-GenerateRandomNaturalSequence(size_t uStartOfRange, size_t uEndOfRange, std::function<double()> pfnRandomNumberGenerator)
+GenerateSequencePermutation(size_t uStartOfRange, size_t uEndOfRange, std::function<double()> pfnRandomNumberGenerator)
 {
-	assert( uStartOfRange > 0 );
+	assert( uStartOfRange >= 0 );
 	assert( uStartOfRange <= uEndOfRange );
 
-	std::unique_ptr<size_t[]> puRandomNaturalSequenceArray(new size_t[uEndOfRange - uStartOfRange]);
+	std::unique_ptr<size_t[]> puSequencePermutationArray(new size_t[uEndOfRange - uStartOfRange]);
 
 	for (size_t uIndex = uStartOfRange; uIndex <= uEndOfRange; uIndex++)
-		puRandomNaturalSequenceArray[uIndex - uStartOfRange] = uIndex;
+		puSequencePermutationArray[uIndex - uStartOfRange] = uIndex;
 	
 	const size_t kuNumberOfElements = uEndOfRange - uStartOfRange + 1;
 	for (size_t uIndex = 0; uIndex < kuNumberOfElements; uIndex++)
@@ -23,10 +23,10 @@ GenerateRandomNaturalSequence(size_t uStartOfRange, size_t uEndOfRange, std::fun
 		const size_t kuSelectedElementIndex = static_cast<size_t>(kuNumberOfSelectableElements*krRandomNumber) + uIndex;
 		assert( kuSelectedElementIndex < kuNumberOfElements );
 			
-		size_t uCurrentElement = puRandomNaturalSequenceArray[uIndex];
-		puRandomNaturalSequenceArray[uIndex] = puRandomNaturalSequenceArray[kuSelectedElementIndex];
-		puRandomNaturalSequenceArray[kuSelectedElementIndex] = uCurrentElement;
+		size_t uCurrentElement = puSequencePermutationArray[uIndex];
+		puSequencePermutationArray[uIndex] = puSequencePermutationArray[kuSelectedElementIndex];
+		puSequencePermutationArray[kuSelectedElementIndex] = uCurrentElement;
 	}
 
-	return puRandomNaturalSequenceArray;
+	return puSequencePermutationArray;
 }

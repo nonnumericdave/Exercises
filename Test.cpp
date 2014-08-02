@@ -1,6 +1,6 @@
 #include "Standard.h"
 
-#include "GenerateRandomNaturalSequence.h"
+#include "GenerateSequencePermutation.h"
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #define DefineUnitTest(pfnTest) { pfnTest, #pfnTest }
@@ -51,10 +51,10 @@ TestBasic()
 			return 0.5;
 	};
 
-	std::unique_ptr<size_t[]> puRandomNaturalSequenceArray =
-		::GenerateRandomNaturalSequence(kuStartOfRange, kuEndOfRange, pfnDummyRandomNumberGenerator);
+	std::unique_ptr<size_t[]> puSequencePermutationArray =
+		::GenerateSequencePermutation(kuStartOfRange, kuEndOfRange, pfnDummyRandomNumberGenerator);
 
-	if ( ! ::CheckForEveryNumberInRange(kuStartOfRange, kuEndOfRange, puRandomNaturalSequenceArray) )
+	if ( ! ::CheckForEveryNumberInRange(kuStartOfRange, kuEndOfRange, puSequencePermutationArray) )
 		return false;
 
 	return true;
@@ -76,10 +76,10 @@ TestUniformRealDistribution()
 		return uniformRealDistribution(mersenneTwisterGenerator);
 	};
 
-	std::unique_ptr<size_t[]> puRandomNaturalSequenceArray =
-		::GenerateRandomNaturalSequence(kuStartOfRange, kuEndOfRange, pfnRandomNumberGenerator);
+	std::unique_ptr<size_t[]> puSequencePermutationArray =
+		::GenerateSequencePermutation(kuStartOfRange, kuEndOfRange, pfnRandomNumberGenerator);
 
-	if ( ! ::CheckForEveryNumberInRange(kuStartOfRange, kuEndOfRange, puRandomNaturalSequenceArray) )
+	if ( ! ::CheckForEveryNumberInRange(kuStartOfRange, kuEndOfRange, puSequencePermutationArray) )
 		return false;
 
 	return true;
