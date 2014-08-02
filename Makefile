@@ -1,5 +1,5 @@
 EXECUTABLE=main
-SOURCES=main.cpp
+SOURCES=main.cpp GenerateRandomNaturalSequence.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 
 $(EXECUTABLE): $(OBJECTS)
