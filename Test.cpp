@@ -1,5 +1,5 @@
-#include <stddef.h>
-#include <stdio.h>
+#include "Standard.h"
+
 #include "GenerateRandomNaturalSequence.h"
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
