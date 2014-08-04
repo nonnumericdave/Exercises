@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdio.h>
 
+#include <bitset>
 #include <random>
 #include <vector>
 

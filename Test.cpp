@@ -16,6 +16,15 @@ struct UnitTest
 };
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+typedef std::vector<int> (*PFN_Sort)(const std::vector<int>&); 
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+const PFN_Sort g_kapfnSort[] =
+{
+	&InsertionSort<int>,
+};
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 std::vector<int>
 GenerateVectorOfUnsortedIntegersWithinRange(const int kiStartOfRange, const int kiEndOfRange, const size_t kuSizeOfVector) 
 {
@@ -49,9 +58,15 @@ TestReallyBasicSorting()
 {
 	std::vector<int> aVectorOfUnsortedIntegers({4, 10, 7, 1, 2, 5, 3, 9, 8, 4, 6, 7});
 
-	std::vector<int> aVectorOfSortedIntegers(::InsertionSort<int>(aVectorOfUnsortedIntegers));
+	for (PFN_Sort pfnSort : g_kapfnSort )
+	{
+		std::vector<int> aVectorOfSortedIntegers(pfnSort(aVectorOfUnsortedIntegers));
 	
-	return ::IsVectorSorted(aVectorOfSortedIntegers);
+		if ( ! ::IsVectorSorted(aVectorOfSortedIntegers) )
+			return false;
+	}
+
+	return true;
 }
 
 
@@ -61,9 +76,15 @@ TestBasicSorting()
 {
 	std::vector<int> aVectorOfUnsortedIntegers(::GenerateVectorOfUnsortedIntegersWithinRange(0, 1000, 250));
 
-	std::vector<int> aVectorOfSortedIntegers(::InsertionSort<int>(aVectorOfUnsortedIntegers));
-	
-	return ::IsVectorSorted(aVectorOfSortedIntegers);
+        for (PFN_Sort pfnSort : g_kapfnSort )
+        {
+                std::vector<int> aVectorOfSortedIntegers(pfnSort(aVectorOfUnsortedIntegers));
+
+                if ( ! ::IsVectorSorted(aVectorOfSortedIntegers) )
+                        return false;
+        }
+
+        return true;
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,9 +93,15 @@ TestEmptyArraySorting()
 {
 	std::vector<int> aVectorOfUnsortedIntegers(0);
 
-	std::vector<int> aVectorOfSortedIntegers(::InsertionSort<int>(aVectorOfUnsortedIntegers));
-	
-	return aVectorOfSortedIntegers.size() == 0;
+	for (PFN_Sort pfnSort : g_kapfnSort )
+	{
+		std::vector<int> aVectorOfSortedIntegers(pfnSort(aVectorOfUnsortedIntegers));
+		
+		if ( aVectorOfSortedIntegers.size() != 0 )
+			return false;
+	}
+
+	return true;
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -84,9 +111,15 @@ TestSortedArraySorting()
 	std::vector<int> aVectorOfIntegers(::GenerateVectorOfUnsortedIntegersWithinRange(0, 1000, 250));
 	std::sort(aVectorOfIntegers.begin(), aVectorOfIntegers.end());
 
-	std::vector<int> aVectorOfSortedIntegers(::InsertionSort<int>(aVectorOfIntegers));
+	for (PFN_Sort pfnSort : g_kapfnSort )
+	{
+		std::vector<int> aVectorOfSortedIntegers(pfnSort(aVectorOfIntegers));
 	
-	return ::IsVectorSorted(aVectorOfSortedIntegers);
+		if ( ! ::IsVectorSorted(aVectorOfSortedIntegers) )
+			return false;
+	}
+
+	return true;
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -95,45 +128,86 @@ TestSortedArrayContainsSameElements()
 {
 	std::vector<int> aVectorOfUnsortedIntegers(::GenerateVectorOfUnsortedIntegersWithinRange(0, 1000, 250));
 
-	std::vector<int> aVectorOfSortedIntegers(::InsertionSort<int>(aVectorOfUnsortedIntegers));
-	
-	assert( aVectorOfUnsortedIntegers.size() == aVectorOfSortedIntegers.size() );
-	
-	const int g_kiSentinel = 2000;
+	const size_t kuVectorSize = aVectorOfUnsortedIntegers.size();
+	std::bitset<250> aBitsetOfMatchedIntegers;
 
-	for (int& iUnsortedValue : aVectorOfUnsortedIntegers )
+	for (PFN_Sort pfnSort : g_kapfnSort )
 	{
-		size_t uBeginSearchIndex = 0;
-		size_t uEndSearchIndex = aVectorOfSortedIntegers.size() - 1;
+		aBitsetOfMatchedIntegers.reset();
 
-		while ( uBeginSearchIndex <= uEndSearchIndex )
+		std::vector<int> aVectorOfSortedIntegers(pfnSort(aVectorOfUnsortedIntegers));
+	
+		assert( kuVectorSize == aVectorOfSortedIntegers.size() );
+	
+		const int g_kiSentinel = 2000;
+
+		for (size_t uIndex = 0; uIndex < kuVectorSize; uIndex++)
 		{
-			const size_t uMiddleIndex = (uBeginSearchIndex + uEndSearchIndex) / 2;
-			const int kiSortedValue	= aVectorOfSortedIntegers[uMiddleIndex];		
+			int iUnsortedValue = aVectorOfUnsortedIntegers[uIndex];	
+	
+			size_t uBeginSearchIndex = 0;
+			size_t uEndSearchIndex = aVectorOfSortedIntegers.size() - 1;
 
-			if ( kiSortedValue == iUnsortedValue )
+			while ( uBeginSearchIndex <= uEndSearchIndex )
 			{
-				iUnsortedValue = g_kiSentinel;		
-				break;
-			}
+				const size_t uMiddleIndex = (uBeginSearchIndex + uEndSearchIndex) / 2;
 
-			if ( kiSortedValue < iUnsortedValue )
-			{
-				uBeginSearchIndex = uMiddleIndex + 1;
-			}
-			else
-			{
-				if ( uMiddleIndex == 0 )
+				size_t uCurrentIndex = uMiddleIndex;
+				bool bFoundMatch = false;
+				while ( aVectorOfSortedIntegers[uCurrentIndex] == iUnsortedValue )
+				{
+					if ( ! aBitsetOfMatchedIntegers[uCurrentIndex] )
+					{
+						aBitsetOfMatchedIntegers[uCurrentIndex] = true;
+						bFoundMatch = true;
+						break;
+					}
+							
+					if ( uCurrentIndex == 0 )
+						break;
+
+					uCurrentIndex--;
+				}
+
+				if ( ! bFoundMatch )
+				{
+					uCurrentIndex = uMiddleIndex;
+
+					while ( aVectorOfSortedIntegers[uCurrentIndex] == iUnsortedValue )
+					{
+						if ( ! aBitsetOfMatchedIntegers[uCurrentIndex] )
+						{
+							aBitsetOfMatchedIntegers[uCurrentIndex] = true;
+							bFoundMatch = true;
+							break;
+						}
+							
+						uCurrentIndex++;
+
+						if ( uCurrentIndex == kuVectorSize )
+							break;
+					}
+
+				}
+				
+				if ( bFoundMatch )
 					break;
+				
+				if ( aVectorOfSortedIntegers[uMiddleIndex] < iUnsortedValue )
+				{
+					uBeginSearchIndex = uMiddleIndex + 1;
+				}
+				else
+				{
+					if ( uMiddleIndex == 0 )
+						break;
 
-				uEndSearchIndex = uMiddleIndex - 1;
+					uEndSearchIndex = uMiddleIndex - 1;
+				}
 			}
 		}
-	}
 
-	for (const int kiUnsortedValue : aVectorOfUnsortedIntegers )
-	{
-		if ( kiUnsortedValue != g_kiSentinel )
+		if ( ! aBitsetOfMatchedIntegers.all() )
 			return false;
 	}
 
