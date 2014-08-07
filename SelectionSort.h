@@ -8,7 +8,7 @@ SelectionSort(const std::vector<T>& aValues)
 {
 	const size_t kuNumberOfElements = aValues.size();
 
-	// Copy not necessary for insertion sort, as it is in place.
+	// Copy not necessary for selection sort, as it is in place.
 	std::vector<T> aValuesCopy(aValues);
 
 	for (size_t uIndexI = 0; uIndexI < kuNumberOfElements; uIndexI++)
