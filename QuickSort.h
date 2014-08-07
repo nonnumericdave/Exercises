@@ -19,7 +19,7 @@ QuickSort(const std::vector<T>& aValues)
 	static PFN_QuickSortHelper pfnQuickSortHelper =
 		[] (std::vector<T>& aValues, size_t uBeginIndex, size_t uEndIndex) -> void
 		{
-			if ( uBeginIndex == uEndIndex )
+			if ( uBeginIndex >= uEndIndex )
 				return;
 
 			size_t uPartitionBeginIndex = uBeginIndex;
@@ -27,7 +27,7 @@ QuickSort(const std::vector<T>& aValues)
 
 			T partitionElement = aValues[uEndIndex];
 
-			while ( uPartitionBeginIndex != uPartitionEndIndex )
+			while ( uPartitionBeginIndex <= uPartitionEndIndex )
 			{
 				if ( aValues[uPartitionBeginIndex] < partitionElement )
 				{
@@ -39,30 +39,21 @@ QuickSort(const std::vector<T>& aValues)
 					aValues[uPartitionEndIndex] = aValues[uPartitionBeginIndex];
 					aValues[uPartitionBeginIndex] = tempElement;
 
+					if ( uPartitionEndIndex == uBeginIndex )
+						break;
+
 					uPartitionEndIndex--;
 				}
 
 			}
 
-			if ( aValues[uPartitionBeginIndex] < partitionElement )
-			{
-				uPartitionBeginIndex++;
-				uPartitionEndIndex++;
+			aValues[uEndIndex] = aValues[uPartitionBeginIndex];
+			aValues[uPartitionBeginIndex] = partitionElement;
 
-				aValues[uEndIndex] = aValues[uPartitionBeginIndex];
-				aValues[uPartitionBeginIndex] = partitionElement;
-			}
-			else
-			{
-				aValues[uEndIndex] = aValues[uPartitionBeginIndex];
-				aValues[uPartitionBeginIndex] = partitionElement;
-			}
+			uPartitionBeginIndex++;
 
-			if ( uPartitionBeginIndex > uBeginIndex )
-				pfnQuickSortHelper(aValues, uBeginIndex, uPartitionBeginIndex - 1);
-		
-			if ( uPartitionEndIndex < uEndIndex )
-				pfnQuickSortHelper(aValues, uPartitionEndIndex + 1, uEndIndex);
+			pfnQuickSortHelper(aValues, uBeginIndex, uPartitionEndIndex);
+			pfnQuickSortHelper(aValues, uPartitionBeginIndex, uEndIndex);
 		};
 
 	pfnQuickSortHelper(aValuesCopy, 0, kuNumberOfElements - 1);
