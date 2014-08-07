@@ -3,6 +3,7 @@
 #include "BubbleSort.h"
 #include "InsertionSort.h"
 #include "MergeSort.h"
+#include "SelectionSort.h"
 #include "QuickSort.h"
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -27,6 +28,7 @@ const PFN_Sort g_kapfnSort[] =
 	&BubbleSort<int>,
 	&InsertionSort<int>,
 	&MergeSort<int>,
+	&SelectionSort<int>,
 	&QuickSort<int>,
 };
 
