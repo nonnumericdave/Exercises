@@ -8,7 +8,7 @@ InsertionSort(const std::vector<T>& aValues)
 {
 	const size_t kuNumberOfElements = aValues.size();
 
-	// Copy not necessary for bubble sort, as it is in place.
+	// Copy not necessary for insertion sort, as it is in place.
 	std::vector<T> aValuesCopy(aValues);
 
 	for (size_t uIndexI = 1; uIndexI < kuNumberOfElements; uIndexI++)
