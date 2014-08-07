@@ -2,6 +2,7 @@
 
 #include "BubbleSort.h"
 #include "InsertionSort.h"
+#include "MergeSort.h"
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #define DefineUnitTest(pfnTest) { pfnTest, #pfnTest }
@@ -24,6 +25,7 @@ const PFN_Sort g_kapfnSort[] =
 {
 	&BubbleSort<int>,
 	&InsertionSort<int>,
+	&MergeSort<int>,
 };
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
