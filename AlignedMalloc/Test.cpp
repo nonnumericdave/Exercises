@@ -80,12 +80,29 @@ TestZeroAlignment()
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+bool 
+TestAlignmentLargerThanSize()
+{
+	constexpr size_t kuSize = 7;
+	constexpr size_t kuAlignment = 256;
+
+	void* pv = ::AlignedMalloc(kuSize, kuAlignment);
+	if ( (reinterpret_cast<size_t>(pv) % kuAlignment) != 0 )
+		return false;
+
+	::AlignedFree(pv);
+
+	return true;
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 static const UnitTest g_aUnitTest[] =
 {
 	DefineUnitTest(TestBasicAlignedMalloc),
 	DefineUnitTest(TestSmallAlignedMalloc),
 	DefineUnitTest(TestSmallerAlignedMalloc),
 	DefineUnitTest(TestZeroAlignment),
+	DefineUnitTest(TestAlignmentLargerThanSize),
 };
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
