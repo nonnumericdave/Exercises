@@ -38,7 +38,7 @@ TestReal()
 	const double krEpsilon = 0.25;
 
 	const double krBase = 7.5;
-	const size_t kuExponent = 5;
+	const size_t kuExponent = 8;
 
 	double rExponentiationControl = 1;
 	for (size_t uIndex = 0; uIndex < kuExponent; uIndex++)
