@@ -102,6 +102,8 @@ std::shared_ptr<typename PriorityQueue<T,K>::Element>
 Heap<T,K>::InsertElementWithKey(const T& t, const K& key)
 {
 	size_t uIndex = m_aHeap.size();
+	assert( uIndex < std::numeric_limits<size_t>::max() );
+
 	std::shared_ptr<Element> pElement(new Element(t, key, uIndex));
 
 	m_aHeap.push_back(pElement);
@@ -187,6 +189,7 @@ Heap<T,K>::ExtractMaximumElement()
 		}
 	}
 
+	pElement->UpdateIndex(std::numeric_limits<size_t>::max());
 	return pElement;
 }
 
