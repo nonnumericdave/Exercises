@@ -31,7 +31,7 @@ TestSortedList()
 		aValues.push_back(uniformIntegerDistribution(mersenneTwisterGenerator));
 	
 	Heap<int, int> heap;
-	for (const int& iValue : aValues )
+	for (const int& iValue : aValues)
 		heap.InsertElementWithKey(iValue, iValue);
 
 	std::sort(aValues.begin(), aValues.end());
@@ -55,9 +55,46 @@ TestSortedList()
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+bool 
+TestIncreaseElementKey()
+{
+	std::random_device randomDeviceGenerator;
+	std::mt19937 mersenneTwisterGenerator(randomDeviceGenerator());
+	std::uniform_int_distribution<int> uniformIntegerDistribution(1, 2500);
+
+	Heap<int, int> heap;
+
+	for (size_t uIndex = 0; uIndex < 4000; uIndex++)
+	{
+		const int iValue = uniformIntegerDistribution(mersenneTwisterGenerator);
+		heap.InsertElementWithKey(iValue, iValue);
+	}
+
+	std::shared_ptr<PriorityQueue<int, int>::Element> pInsertedElement =
+		heap.InsertElementWithKey(1, 1);
+
+	heap.IncreaseElementKey(pInsertedElement.get(), 2501);
+
+	for (size_t uIndex = 0; uIndex < 4500; uIndex++)
+	{
+		const int iValue = uniformIntegerDistribution(mersenneTwisterGenerator);
+		heap.InsertElementWithKey(iValue, iValue);
+	}
+
+	std::shared_ptr<PriorityQueue<int, int>::Element> pMaximumElement = 
+		heap.ExtractMaximumElement();
+	
+	if ( pInsertedElement != pMaximumElement )
+		return false;
+
+	return true;
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 static const UnitTest g_aUnitTest[] =
 {
 	DefineUnitTest(TestSortedList),
+	DefineUnitTest(TestIncreaseElementKey),
 };
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -22,6 +22,9 @@ public:
 		Element(const T& t, const K& key, const size_t kuIndex);
 		Element(const Element& element);
 
+		void UpdateKey(const K& key);
+
+		size_t Index() const;
 		void UpdateIndex(const size_t kuIndex);
 
 		friend Heap;
@@ -35,7 +38,7 @@ public:
 	virtual std::shared_ptr<typename PriorityQueue<T,K>::Element> InsertElementWithKey(const T& t, const K& key) override;
 	virtual std::shared_ptr<typename PriorityQueue<T,K>::Element> MaximumElement() const override;
 	virtual std::shared_ptr<typename PriorityQueue<T,K>::Element> ExtractMaximumElement() override;
-	virtual void IncreaseElementKey(const typename PriorityQueue<T,K>::Element* pElement, const K& key) override;
+	virtual void IncreaseElementKey(typename PriorityQueue<T,K>::Element* pElement, const K& key) override;
 
 private:
 	size_t ParentIndexForChildIndex(const size_t kuChildIndex) const;
@@ -84,6 +87,22 @@ Heap<T,K>::Element::Element(const T& t, const K& key, const size_t kuIndex) :
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 template<typename T, typename K>
+void
+Heap<T,K>::Element::UpdateKey(const K& key)
+{
+	m_key = key;
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+template<typename T, typename K>
+size_t
+Heap<T,K>::Element::Index() const
+{
+	return m_uIndex;
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+template<typename T, typename K>
 void 
 Heap<T,K>::Element::UpdateIndex(const size_t kuIndex)
 {
@@ -105,24 +124,9 @@ Heap<T,K>::InsertElementWithKey(const T& t, const K& key)
 	assert( uIndex < std::numeric_limits<size_t>::max() );
 
 	std::shared_ptr<Element> pElement(new Element(t, key, uIndex));
-
 	m_aHeap.push_back(pElement);
 
-	while ( uIndex > 0 )
-	{
-		size_t uParentIndex = ParentIndexForChildIndex(uIndex);
-	
-		if ( m_aHeap[uParentIndex]->Key() >= pElement->Key() )
-			break;
-
-		m_aHeap[uIndex] = m_aHeap[uParentIndex];
-		m_aHeap[uIndex]->UpdateIndex(uIndex);
-
-		uIndex = uParentIndex;
-	}
-
-	m_aHeap[uIndex] = pElement;
-	pElement->UpdateIndex(uIndex);
+	IncreaseElementKey(pElement.get(), key);
 
 	return pElement;
 }
@@ -196,10 +200,33 @@ Heap<T,K>::ExtractMaximumElement()
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 template<typename T, typename K>
 void
-Heap<T,K>::IncreaseElementKey(const typename PriorityQueue<T,K>::Element* pElement, const K& key)
+Heap<T,K>::IncreaseElementKey(typename PriorityQueue<T,K>::Element* pElement, const K& key)
 {
-	// TODO
-	assert( false );
+	assert( dynamic_cast<const Element*>(pElement) != nullptr );
+	Element* pTempElement = static_cast<Element*>(pElement);
+	size_t uIndex = pTempElement->Index();
+
+	if ( uIndex == std::numeric_limits<size_t>::max() || pElement->Key() > key )
+		return;
+
+	std::shared_ptr<Element> pHeapElement = m_aHeap[uIndex];
+	pHeapElement->UpdateKey(key);
+
+	while ( uIndex > 0 )
+	{
+		size_t uParentIndex = ParentIndexForChildIndex(uIndex);
+	
+		if ( m_aHeap[uParentIndex]->Key() >= pElement->Key() )
+			break;
+
+		m_aHeap[uIndex] = m_aHeap[uParentIndex];
+		m_aHeap[uIndex]->UpdateIndex(uIndex);
+
+		uIndex = uParentIndex;
+	}
+
+	m_aHeap[uIndex] = pHeapElement;
+	pHeapElement->UpdateIndex(uIndex);
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
