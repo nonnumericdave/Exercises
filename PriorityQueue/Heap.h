@@ -19,13 +19,16 @@ public:
 	
 	protected:
 		Element();
-		Element(const T& t, const K& key);
+		Element(const T& t, const K& key, const size_t kuIndex);
 		Element(const Element& element);
 
-		friend Heap;		
+		void UpdateIndex(const size_t kuIndex);
+
+		friend Heap;
 
 		T m_t;
 		K m_key;
+		size_t m_uIndex;
 	};
 
 	virtual ~Heap() override;
@@ -72,10 +75,19 @@ Heap<T,K>::Element::Element()
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 template<typename T, typename K>
-Heap<T,K>::Element::Element(const T& t, const K& key) :
+Heap<T,K>::Element::Element(const T& t, const K& key, const size_t kuIndex) :
 	m_t(t),
-	m_key(key)
+	m_key(key),
+	m_uIndex(kuIndex)
 {
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+template<typename T, typename K>
+void 
+Heap<T,K>::Element::UpdateIndex(const size_t kuIndex)
+{
+	m_uIndex = kuIndex;
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -89,9 +101,8 @@ template<typename T, typename K>
 std::shared_ptr<typename PriorityQueue<T,K>::Element>
 Heap<T,K>::InsertElementWithKey(const T& t, const K& key)
 {
-	std::shared_ptr<Element> pElement(new Element(t, key));
-
 	size_t uIndex = m_aHeap.size();
+	std::shared_ptr<Element> pElement(new Element(t, key, uIndex));
 
 	m_aHeap.push_back(pElement);
 
@@ -103,10 +114,13 @@ Heap<T,K>::InsertElementWithKey(const T& t, const K& key)
 			break;
 
 		m_aHeap[uIndex] = m_aHeap[uParentIndex];
+		m_aHeap[uIndex]->UpdateIndex(uIndex);
+
 		uIndex = uParentIndex;
 	}
 
 	m_aHeap[uIndex] = pElement;
+	pElement->UpdateIndex(uIndex);
 
 	return pElement;
 }
@@ -136,7 +150,9 @@ Heap<T,K>::ExtractMaximumElement()
 	size_t uIndex = 0;
 	const size_t kuLastElementIndex = kuHeapSize - 1;
 	
-	m_aHeap[uIndex] = m_aHeap[kuLastElementIndex];	
+	m_aHeap[uIndex] = m_aHeap[kuLastElementIndex];
+	m_aHeap[uIndex]->UpdateIndex(uIndex);
+
 	m_aHeap.pop_back();
 	kuHeapSize--;
 
@@ -160,8 +176,12 @@ Heap<T,K>::ExtractMaximumElement()
 				break;
 
 			std::shared_ptr<Element> pTempElement(m_aHeap[uIndex]);
+			
 			m_aHeap[uIndex] = m_aHeap[uLargestKeyIndex];
+			m_aHeap[uIndex]->UpdateIndex(uIndex);
+
 			m_aHeap[uLargestKeyIndex] = pTempElement;
+			pTempElement->UpdateIndex(uLargestKeyIndex);
 
 			uIndex = uLargestKeyIndex;
 		}
