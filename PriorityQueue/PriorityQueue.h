@@ -25,6 +25,7 @@ public:
 	virtual std::shared_ptr<Element> MaximumElement() const = 0;
 	virtual std::shared_ptr<Element> ExtractMaximumElement() = 0;
 	virtual void IncreaseElementKey(Element* pElement, const K& key) = 0;
+	virtual void MergePriorityQueue(PriorityQueue<T,K>* pPriorityQueue) = 0;
 };
 
 #endif

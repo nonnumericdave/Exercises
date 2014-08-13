@@ -91,10 +91,70 @@ TestIncreaseElementKey()
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+bool 
+TestMerge()
+{
+	std::random_device randomDeviceGenerator;
+	std::mt19937 mersenneTwisterGenerator(randomDeviceGenerator());
+	std::uniform_int_distribution<int> uniformIntegerDistribution(1, 2500);
+
+	constexpr size_t kuValueCount = 1000;
+
+	std::vector<int> aXValues(kuValueCount);
+	
+	for (size_t uIndex = 0; uIndex < kuValueCount; uIndex++)
+		aXValues.push_back(uniformIntegerDistribution(mersenneTwisterGenerator));
+	
+	Heap<int, int> heapX;
+	for (const int& iValue : aXValues)
+		heapX.InsertElementWithKey(iValue, iValue);
+
+	std::sort(aXValues.begin(), aXValues.end());
+
+	std::vector<int> aYValues(kuValueCount);
+	
+	for (size_t uIndex = 0; uIndex < kuValueCount; uIndex++)
+		aYValues.push_back(uniformIntegerDistribution(mersenneTwisterGenerator));
+	
+	Heap<int, int> heapY;
+	for (const int& iValue : aYValues)
+		heapY.InsertElementWithKey(iValue, iValue);
+
+	std::sort(aYValues.begin(), aYValues.end());
+
+	std::vector<int> aValues;
+	std::merge(aXValues.begin(), aXValues.end(), aYValues.begin(), aYValues.end(), std::back_inserter(aValues));
+
+	heapX.MergePriorityQueue(&heapY);
+
+	std::shared_ptr<PriorityQueue<int, int>::Element> pElement = heapY.ExtractMaximumElement();
+	if ( pElement != nullptr )
+		return false;
+
+	for (auto itValue = aValues.crbegin(); itValue != aValues.crend(); itValue++)
+	{
+		std::shared_ptr<PriorityQueue<int, int>::Element> pElement = heapX.ExtractMaximumElement();
+
+		if ( pElement == nullptr )
+			return false;
+
+		if ( pElement->Value() != *itValue )
+			return false;
+	}
+
+	pElement = heapX.ExtractMaximumElement();
+	if ( pElement != nullptr )
+		return false;
+
+	return true;
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 static const UnitTest g_aUnitTest[] =
 {
 	DefineUnitTest(TestSortedList),
 	DefineUnitTest(TestIncreaseElementKey),
+	DefineUnitTest(TestMerge),
 };
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

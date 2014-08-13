@@ -39,6 +39,7 @@ public:
 	virtual std::shared_ptr<typename PriorityQueue<T,K>::Element> MaximumElement() const override;
 	virtual std::shared_ptr<typename PriorityQueue<T,K>::Element> ExtractMaximumElement() override;
 	virtual void IncreaseElementKey(typename PriorityQueue<T,K>::Element* pElement, const K& key) override;
+	virtual void MergePriorityQueue(PriorityQueue<T,K>* pPriorityQueue) override;
 
 private:
 	size_t ParentIndexForChildIndex(const size_t kuChildIndex) const;
@@ -227,6 +228,34 @@ Heap<T,K>::IncreaseElementKey(typename PriorityQueue<T,K>::Element* pElement, co
 
 	m_aHeap[uIndex] = pHeapElement;
 	pHeapElement->UpdateIndex(uIndex);
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+template<typename T, typename K>
+void
+Heap<T,K>::MergePriorityQueue(PriorityQueue<T,K>* pPriorityQueue)
+{
+	assert( dynamic_cast<Heap*>(pPriorityQueue) != nullptr );
+	Heap<T,K>* pHeap = static_cast<Heap*>(pPriorityQueue);
+
+	const size_t kuHeapSize = m_aHeap.size();
+	const size_t kuOtherHeapSize = pHeap->m_aHeap.size();	
+
+	m_aHeap.reserve(kuHeapSize + kuOtherHeapSize);
+	
+	for (size_t uIndex = 0; uIndex < kuOtherHeapSize; uIndex++)
+	{
+		const size_t kuNewIndex = kuHeapSize + uIndex;
+
+		std::shared_ptr<Element> pElement(pHeap->m_aHeap[uIndex]);
+
+		m_aHeap.push_back(pElement);
+		pElement->UpdateIndex(kuNewIndex);
+
+		IncreaseElementKey(pElement.get(), pElement->Key());
+	}
+
+	pHeap->m_aHeap.clear();
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
