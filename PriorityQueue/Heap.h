@@ -212,20 +212,24 @@ Heap<T,K>::MergePriorityQueue(PriorityQueue<T,K>* pPriorityQueue)
 	Heap<T,K>* pHeap = static_cast<Heap*>(pPriorityQueue);
 
 	const size_t kuHeapSize = m_aHeap.size();
-	const size_t kuOtherHeapSize = pHeap->m_aHeap.size();	
-
-	m_aHeap.reserve(kuHeapSize + kuOtherHeapSize);
+	const size_t kuOtherHeapSize = pHeap->m_aHeap.size();
 	
+	const size_t kuMergedHeapSize = kuHeapSize + kuOtherHeapSize;
+	m_aHeap.reserve(kuMergedHeapSize);
+
 	for (size_t uIndex = 0; uIndex < kuOtherHeapSize; uIndex++)
 	{
-		const size_t kuNewIndex = kuHeapSize + uIndex;
-
 		std::shared_ptr<Element> pElement(pHeap->m_aHeap[uIndex]);
-
+		pElement->UpdateIndex(kuHeapSize + uIndex);
 		m_aHeap.push_back(pElement);
-		pElement->UpdateIndex(kuNewIndex);
+	}
 
-		IncreaseElementKey(pElement.get(), pElement->Key());
+	for (size_t uIndex = kuMergedHeapSize / 2; ; uIndex--)
+	{
+		Heapify(uIndex);	
+
+		if ( uIndex == 0 )
+			break;
 	}
 
 	pHeap->m_aHeap.clear();
