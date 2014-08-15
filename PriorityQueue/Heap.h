@@ -42,6 +42,7 @@ public:
 	virtual void MergePriorityQueue(PriorityQueue<T,K>* pPriorityQueue) override;
 
 private:
+	void Heapify(const size_t kuIndex);
 	size_t ParentIndexForChildIndex(const size_t kuChildIndex) const;
 	size_t LeftChildIndexForParentIndex(const size_t kuParentIndex) const;
 	size_t RightChildIndexForParentIndex(const size_t kuParentIndex) const;
@@ -161,38 +162,8 @@ Heap<T,K>::ExtractMaximumElement()
 	m_aHeap[uIndex]->UpdateIndex(uIndex);
 
 	m_aHeap.pop_back();
-	kuHeapSize--;
 
-	if ( kuHeapSize > 0 )
-	{
-		while ( uIndex < (kuHeapSize - 1) )
-		{
-			size_t uLargestKeyIndex = uIndex;
-			size_t uLeftChildIndex = LeftChildIndexForParentIndex(uIndex);
-			size_t uRightChildIndex = RightChildIndexForParentIndex(uIndex);
-
-			if ( uLeftChildIndex < kuHeapSize && 
-			     m_aHeap[uLeftChildIndex]->Key() > m_aHeap[uLargestKeyIndex]->Key() )
-				uLargestKeyIndex = uLeftChildIndex;
-
-			if ( uRightChildIndex < kuHeapSize && 
-			     m_aHeap[uRightChildIndex]->Key() > m_aHeap[uLargestKeyIndex]->Key() )
-				uLargestKeyIndex = uRightChildIndex;
-
-			if ( uLargestKeyIndex == uIndex )
-				break;
-
-			std::shared_ptr<Element> pTempElement(m_aHeap[uIndex]);
-			
-			m_aHeap[uIndex] = m_aHeap[uLargestKeyIndex];
-			m_aHeap[uIndex]->UpdateIndex(uIndex);
-
-			m_aHeap[uLargestKeyIndex] = pTempElement;
-			pTempElement->UpdateIndex(uLargestKeyIndex);
-
-			uIndex = uLargestKeyIndex;
-		}
-	}
+	Heapify(uIndex);
 
 	pElement->UpdateIndex(std::numeric_limits<size_t>::max());
 	return pElement;
@@ -203,6 +174,7 @@ template<typename T, typename K>
 void
 Heap<T,K>::IncreaseElementKey(typename PriorityQueue<T,K>::Element* pElement, const K& key)
 {
+	assert( pElement != nullptr );
 	assert( dynamic_cast<const Element*>(pElement) != nullptr );
 	Element* pTempElement = static_cast<Element*>(pElement);
 	size_t uIndex = pTempElement->Index();
@@ -235,6 +207,7 @@ template<typename T, typename K>
 void
 Heap<T,K>::MergePriorityQueue(PriorityQueue<T,K>* pPriorityQueue)
 {
+	assert( pPriorityQueue != nullptr );
 	assert( dynamic_cast<Heap*>(pPriorityQueue) != nullptr );
 	Heap<T,K>* pHeap = static_cast<Heap*>(pPriorityQueue);
 
@@ -256,6 +229,45 @@ Heap<T,K>::MergePriorityQueue(PriorityQueue<T,K>* pPriorityQueue)
 	}
 
 	pHeap->m_aHeap.clear();
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+template<typename T, typename K>
+void
+Heap<T,K>::Heapify(const size_t kuIndex)
+{
+	const size_t kuHeapSize = m_aHeap.size();
+	if ( kuHeapSize == 0 )
+		return;
+
+	size_t uIndex = kuIndex;
+	while ( uIndex < (kuHeapSize - 1) )
+	{
+		size_t uLargestKeyIndex = uIndex;
+		size_t uLeftChildIndex = LeftChildIndexForParentIndex(uIndex);
+		size_t uRightChildIndex = RightChildIndexForParentIndex(uIndex);
+
+		if ( uLeftChildIndex < kuHeapSize && 
+		     m_aHeap[uLeftChildIndex]->Key() > m_aHeap[uLargestKeyIndex]->Key() )
+			uLargestKeyIndex = uLeftChildIndex;
+
+		if ( uRightChildIndex < kuHeapSize && 
+		     m_aHeap[uRightChildIndex]->Key() > m_aHeap[uLargestKeyIndex]->Key() )
+			uLargestKeyIndex = uRightChildIndex;
+
+		if ( uLargestKeyIndex == uIndex )
+			break;
+
+		std::shared_ptr<Element> pTempElement(m_aHeap[uIndex]);
+		
+		m_aHeap[uIndex] = m_aHeap[uLargestKeyIndex];
+		m_aHeap[uIndex]->UpdateIndex(uIndex);
+
+		m_aHeap[uLargestKeyIndex] = pTempElement;
+		pTempElement->UpdateIndex(uLargestKeyIndex);
+
+		uIndex = uLargestKeyIndex;
+	}
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
