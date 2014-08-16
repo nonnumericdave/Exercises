@@ -8,7 +8,6 @@ MergeSort(const std::vector<T>& aValues)
 {
 	const size_t kuNumberOfElements = aValues.size();
 
-	// Copy not necessary for merge sort, as it is in place.
 	std::vector<T> aValuesCopy(aValues);
 	
 	if ( kuNumberOfElements == 0 )
