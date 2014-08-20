@@ -1,6 +1,7 @@
 #include "Standard.h"
 
 #include "BubbleSort.h"
+#include "CountingSort.h"
 #include "HeapSort.h"
 #include "InsertionSort.h"
 #include "MergeSort.h"
@@ -27,6 +28,7 @@ typedef std::vector<int> (*PFN_Sort)(const std::vector<int>&);
 const PFN_Sort g_kapfnSort[] =
 {
 	&BubbleSort<int>,
+	&CountingSort<int>,
 	&HeapSort<int>,
 	&InsertionSort<int>,
 	&MergeSort<int>,

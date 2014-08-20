@@ -7,6 +7,7 @@
 
 #include <bitset>
 #include <random>
+#include <type_traits>
 #include <vector>
 
 #endif
