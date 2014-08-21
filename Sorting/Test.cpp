@@ -5,6 +5,7 @@
 #include "HeapSort.h"
 #include "InsertionSort.h"
 #include "MergeSort.h"
+#include "RadixSort.h"
 #include "SelectionSort.h"
 #include "QuickSort.h"
 
@@ -32,6 +33,7 @@ const PFN_Sort g_kapfnSort[] =
 	&HeapSort<int>,
 	&InsertionSort<int>,
 	&MergeSort<int>,
+	&RadixSort<int>,
 	&SelectionSort<int>,
 	&QuickSort<int>,
 };
