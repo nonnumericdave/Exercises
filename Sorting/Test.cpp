@@ -86,7 +86,7 @@ TestReallyBasicSorting()
 bool
 TestBasicSorting()
 {
-	std::vector<int> aVectorOfUnsortedIntegers(::GenerateVectorOfUnsortedIntegersWithinRange(0, 1000, 250));
+	std::vector<int> aVectorOfUnsortedIntegers(::GenerateVectorOfUnsortedIntegersWithinRange(-1000, 1000, 250));
 
         for (PFN_Sort pfnSort : g_kapfnSort )
         {
@@ -120,7 +120,7 @@ TestEmptyArraySorting()
 bool
 TestSortedArraySorting()
 {
-	std::vector<int> aVectorOfIntegers(::GenerateVectorOfUnsortedIntegersWithinRange(0, 1000, 250));
+	std::vector<int> aVectorOfIntegers(::GenerateVectorOfUnsortedIntegersWithinRange(-1000, 1000, 250));
 	std::sort(aVectorOfIntegers.begin(), aVectorOfIntegers.end());
 
 	for (PFN_Sort pfnSort : g_kapfnSort )
@@ -138,7 +138,7 @@ TestSortedArraySorting()
 bool
 TestSortedArrayContainsSameElements()
 {
-	std::vector<int> aVectorOfUnsortedIntegers(::GenerateVectorOfUnsortedIntegersWithinRange(0, 1000, 250));
+	std::vector<int> aVectorOfUnsortedIntegers(::GenerateVectorOfUnsortedIntegersWithinRange(-1000, 1000, 250));
 
 	const size_t kuVectorSize = aVectorOfUnsortedIntegers.size();
 	std::bitset<250> aBitsetOfMatchedIntegers;
