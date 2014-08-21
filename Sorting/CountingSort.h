@@ -34,8 +34,8 @@ CountingSort(const std::vector<T>& aValues)
 	for (size_t uIndex = 1; uIndex < kuSizeOfRange; uIndex++)
 		aCountingVector[uIndex] += aCountingVector[uIndex - 1]; 
 
-	for (const auto tElement : aValues)
-		aValuesCopy[aCountingVector[tElement - tMinimumElement]-- - 1] = tElement;
+	for (auto itElement = aValues.crbegin(); itElement != aValues.crend(); itElement++)
+		aValuesCopy[aCountingVector[*itElement - tMinimumElement]-- - 1] = *itElement;
 
 	return aValuesCopy;
 }
